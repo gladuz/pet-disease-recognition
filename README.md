@@ -6,6 +6,10 @@
 After the steps above overall structure of the `data` folder looks like following:
 ```bash
 ───data
+    ├───training_dataset.csv
+    ├───training_dataset.json
+    ├───validation_dataset.csv
+    ├───validation_dataset.json
     └───152.반려동물 피부질환 데이터
         └───01.데이터
             ├───1.Training
@@ -49,4 +53,6 @@ After the steps above overall structure of the `data` folder looks like followin
 ```
 
 ## Parsing the dataset 
-To reparse the json files run the `Json Parser.ipynb` file. It will generate training and validation json and csv files. Json file is organized as list of dictionary objects which corresponds to the metadata of images
+To reparse the json files run the `Json Parser.ipynb` file. It will generate training and validation json and csv files inside the `data` folder. 
+
+Json file is organized as list of dictionary objects which corresponds to the metadata of images
