@@ -63,7 +63,7 @@ In order to train a `YOLO` model, the labels stored in the `.json` files need to
 After running the code, the user will be prompted to select a folder. Please select the `01.데이터` present in the directory of the dataset (refer to the dataset directory tree above). After selecting the folder, the script will automatically extract and create the `.txt` files of the labels with their respective images.
 
 ## Missing image data
-While generating the YOLO labels, we noticed that the following images were missing from directory : `A3_태선화_과다색소침착`
+While generating the YOLO labels, we noticed that the following images were missing from the directory `A3_태선화_과다색소침착`:
 
 `IMG_D_A3_112794` 
 `IMG_D_A3_112826` 
