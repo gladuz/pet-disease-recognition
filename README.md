@@ -65,10 +65,9 @@ After running the code, the user will be prompted to select a folder. Please sel
 ## Missing image data
 While generating the YOLO labels, we noticed that the following images were missing from directory : `A3_태선화_과다색소침착`
 
-IMG_D_A3_112794
-IMG_D_A3_112826
-IMG_D_A3_112921
-IMG_D_A3_113012
-IMG_D_A3_113089
-IMG_D_A3_113145
-
+`IMG_D_A3_112794` 
+`IMG_D_A3_112826` 
+`IMG_D_A3_112921` 
+`IMG_D_A3_113012` 
+`IMG_D_A3_113089` 
+`IMG_D_A3_113145` 
