@@ -56,3 +56,19 @@ After the steps above overall structure of the `data` folder looks like followin
 To reparse the json files run the `Json Parser.ipynb` file. It will generate training and validation json and csv files inside the `data` folder. 
 
 Json file is organized as list of dictionary objects which corresponds to the metadata of images
+
+## Generating YOLO format labels
+In order to train a `YOLO` model, the labels stored in the `.json` files need to be extracted and saved separately as `.txt` files following the `YOLO` format. For that purpose, a python script is available under the folder `yolo_labels`.
+
+After running the code, the user will be prompted to select a folder. Please select the `01.데이터` present in the directory of the dataset (refer to the dataset directory tree above). After selecting the folder, the script will automatically extract and create the `.txt` files of the labels with their respective images.
+
+## Missing image data
+While generating the YOLO labels, we noticed that the following images were missing from directory : `A3_태선화_과다색소침착`
+
+IMG_D_A3_112794
+IMG_D_A3_112826
+IMG_D_A3_112921
+IMG_D_A3_113012
+IMG_D_A3_113089
+IMG_D_A3_113145
+
