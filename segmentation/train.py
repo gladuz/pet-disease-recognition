@@ -161,7 +161,7 @@ ACTIVATION = None # could be None for logits or 'softmax2d' for multiclass segme
 DEVICE = 'cuda'
 
 # create segmentation model with pretrained encoder
-model = smp.FPN(
+model = smp.Unet(
     encoder_name=ENCODER, 
     encoder_weights=ENCODER_WEIGHTS, 
     classes=len(CLASSES), 
