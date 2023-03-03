@@ -22,27 +22,26 @@ import segmentation_models_pytorch as smp
 from segmentation_models_pytorch import utils as smp_utils
 from tqdm import trange, tqdm
 
+from PIL import ImageFile
+ImageFile.LOAD_TRUNCATED_IMAGES = True
+
 class SkinDataset(Dataset):
-    def __init__(self, df_file, augmentation=None, preprocessing=None, root='./'):
+    def __init__(self, df_file, augmentation=None, preprocessing=None, root='../'):
         super().__init__()
         self.data = pd.read_csv(df_file)
-        #self.data = json.load(open('data/training_clean_dataset.json'))
         self.label_names = ['B']+list(self.data['lesions'].unique())
         self.augmentation = augmentation
         self.preprocessing = preprocessing
         self.root = root
     
     def __getitem__(self, idx):
+        
         image = Image.open(os.path.join(self.root, self.data.loc[idx,'image_full_path']))
         mask = self.get_mask_pil_image(idx, image)
-        
         image = np.array(image)
+
         assert image.dtype == np.uint8
-        # extract certain classes from mask
-        # masks = [(mask == v) for v in range(len(self.label_names))]
-        # mask = np.stack(masks, axis=-1).astype('float')
-         # apply augmentations
-    
+
         if self.augmentation:
             sample = self.augmentation(image=image, mask=mask)
             image, mask = sample['image'], sample['mask']
@@ -50,6 +49,7 @@ class SkinDataset(Dataset):
         if self.preprocessing:
             sample = self.preprocessing(image=image, mask=mask)
             image, mask = sample['image'], sample['mask']
+
         return image, mask
         
     def __len__(self):
@@ -71,7 +71,7 @@ class SkinDataset(Dataset):
         
         return mask
 
-dataset = SkinDataset('../data/training_clean_dataset.csv', root='/mnt/f/skin/Classification-skin-disease-pets')
+dataset = SkinDataset('../data/training_clean_dataset.csv', root='../')
 
 import albumentations as albu
 def get_training_augmentation():
@@ -96,15 +96,15 @@ def get_training_augmentation():
         #     p=0.9,
         # ),
 
-        albu.OneOf(
-            [
-                albu.Sharpen (p=1),
-                albu.Blur(blur_limit=3, p=1),
-                albu.MotionBlur(blur_limit=3, p=1),
-                albu.RandomBrightnessContrast(p=1),
-            ],
-            p=0.9,
-        ),
+        # albu.OneOf(
+        #     [
+        #         albu.Sharpen (p=1),
+        #         albu.Blur(blur_limit=3, p=1),
+        #         albu.MotionBlur(blur_limit=3, p=1),
+        #         albu.RandomBrightnessContrast(p=1),
+        #     ],
+        #     p=0.9,
+        # ),
 
         # albu.OneOf(
         #     [
@@ -130,28 +130,8 @@ def get_validation_augmentation():
 def to_tensor(x, **kwargs):
     return x.transpose(2, 0, 1).astype('float32')
 
-
-def get_preprocessing(preprocessing_fn):
-    """Construct preprocessing transform
-    
-    Args:
-        preprocessing_fn (callbale): data normalization function 
-            (can be specific for each pretrained neural network)
-    Return:
-        transform: albumentations.Compose
-    
-    """
-    
-    _transform = [
-        albu.Lambda(image=preprocessing_fn),
-        albu.Lambda(image=to_tensor, mask=to_tensor),
-    ]
-    return albu.Compose(_transform)
-
-#preprocessing_fn = smp.encoders.get_preprocessing_fn(ENCODER, ENCODER_WEIGHTS)
-
 augmented_dataset = SkinDataset('../data/training_clean_dataset.csv',
-    augmentation=get_training_augmentation(), root='/mnt/f/skin/Classification-skin-disease-pets'
+    augmentation=get_training_augmentation(), root='../'
 )
 
 ENCODER = 'resnet18'
@@ -175,19 +155,24 @@ train_dataset, val_dataset = torch.utils.data.random_split(augmented_dataset, [t
 small_train_dataset = torch.utils.data.Subset(train_dataset, range(100))
 small_val_dataset = torch.utils.data.Subset(val_dataset, range(100))
 
-train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True, num_workers=4)
-valid_loader = DataLoader(val_dataset, batch_size=16, shuffle=False, num_workers=4)
+train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True, num_workers=2)
+valid_loader = DataLoader(val_dataset, batch_size=16, shuffle=False, num_workers=2)
 criterion = torch.nn.CrossEntropyLoss()
 optimizer = torch.optim.AdamW(model.parameters(), lr=3e-5)
 
-for epoch in range(20):
+for epoch in range(1):
     losses = []
     running_loss = 0.0
-
+    foregrounds = []
+    all_pixels = []
     for i, data in enumerate(tqdm(train_loader)):
+        
         # get the inputs; data is a list of [inputs, labels]
         inputs, labels = data
-        #pickle_data.append((inputs, labels))
+        foregrounds.extend(labels.count_nonzero(dim=(1,2)).tolist())
+        all_pixels.append(labels.numel())
+        continue
+        
         inputs, labels = inputs.to(DEVICE), labels.long().to(DEVICE)
 
         # zero the parameter gradients
@@ -198,9 +183,9 @@ for epoch in range(20):
         loss = criterion(outputs, labels.long())
         loss.backward()
         optimizer.step()
-        if i == 30:
-            break
         # print statistics
         losses.append(loss.item())
     print(np.mean(losses))
+    torch.save(foregrounds, "foreground_count.pt")
+    print(f"Overall pixel ratio: {np.sum(foregrounds) / np.sum(all_pixels)}. Max pixels ratio is: {np.max(foregrounds) / (288*512)}")
 print('Finished Training')
