@@ -73,7 +73,9 @@ While generating the YOLO labels, we noticed that the following images were miss
 `IMG_D_A3_113145` 
 
 ## Classification using transfer learning
-We tried image classifcation using transfer learning on pretrained models like resnet50, efficientnet etc but the performance (accuracy) is still low due to data inconsistancies. Most images have varying backgrounds which serve as a lot of noise while training. the next step is to extract the region of interest from the image resize and create a new dataset for better classfication results.
+We tried image classifcation using transfer learning on pretrained models like resnet50, efficientnet etc but the performance (accuracy) is still low due to data inconsistancies. Most images have varying backgrounds which serve as a lot of noise while training. The next step is to extract the region of interest from the image resize and create a new dataset for better classfication results.
+
+After cropping and resizing images the results are still very poor with low accuracy and high loss. This seems to be the result of the inconsistant image resolution when cropping and resizing images.
 
 ## Semantic segmentation
 Semantic segmentation models overfitted heavily using the standard training. After exploring  the dataset we found that the objects are relatively small with 93% of them occupying less than 5% of the image. 
