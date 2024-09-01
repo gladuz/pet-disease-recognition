@@ -1,4 +1,17 @@
 # Dataset
+## Exploratory data analysis
+- ~55k images, polygon and box coordinates of lesion are annotated
+- We did the EDA report and cleaned the dataset inconsistencies
+- 6 different lesion types, with no negative examples
+To see the full EDA open [EDA html file](EDA_Pet_skin_disease.html)
+![EDA example](assets/eda-example.png "EDA")
+
+## Object detection results
+
+![Training logs](assets/training_logs.png)
+
+![Detection examples](assets/detection-examples.png)
+
 ## Dataset preperation
 1. After downloading the dataset unzip the `TL01` and `VL01`  in `라벨링데이터` folders in both training and validation. We are currently not using the `원천데이터` folder and its contents.
 2. Move the `152.반려동물 피부질환 데이터` folder into `data` folder. 
@@ -83,3 +96,4 @@ Semantic segmentation models overfitted heavily using the standard training. Aft
 | Object to image ratio    | 0.5   | 0.1   | 0.05  | 0.01 | 0.005 | 0.001 |
 |--------------------------|-------|-------|-------|------|-------|-------|
 | Number of images < ratio | 99.9% | 97.4% | 93.2% | 65%  | 46%   | 11%   |
+
